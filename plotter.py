@@ -1,38 +1,29 @@
 import matplotlib.pyplot as plt
+import json
 
-# x variables
-x_title = 'Displacement (m)'
-x = [
-    0.008,
-    0.022,
-    0.036,
-    0.052,
-    0.067,
-    0.082,
-    0.096,
-    0.111,
-    0.125,
-    0.275
-]
+with open('unit28.1.json') as json_file:
+    data = json.load(json_file)
+    xkcd = data['xkcd']
+    grid = data['grid']
+    values = data['plots']
 
-# y variables
-y_title = 'Force (N)'
-y = [
-    0.196,
-    0.294,
-    0.392,
-    0.491,
-    0.589,
-    0.687,
-    0.785,
-    0.883,
-    0.981,
-    1.96
-]
+def plotter ():
+    # grab data from dictionary and add it to the plot
+    plt.plot(values[0]['x']['values'], values[0]['y']['values'], 'bo')
+    plt.xlabel(values[0]['x']['title'])
+    plt.ylabel(values[0]['y']['title'])
 
-with plt.xkcd():
-    plt.plot(x, y, 'bo', x, y)
-    plt.xlabel(x_title)
-    plt.ylabel(y_title)
-    plt.grid()
+    # if grid is true, turn on the grid
+    if grid:
+        plt.grid()
+
+    # show the grid
     plt.show()
+
+# if xkcd is true, display the graph in xkcd style
+if xkcd:
+    with plt.xkcd():
+        plotter()
+# otherwise, display it normally
+else:
+    plotter()
