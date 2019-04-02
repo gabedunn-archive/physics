@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import json, sys, re
 
-# grab course level from args
+# grab course level from args.
 if len(sys.argv) < 2:
     sys.exit('specify the course level (eg. 30)')
 else:
     level = sys.argv[1]
 
-# grab unit number from args
+# grab unit number from args.
 if len(sys.argv) < 3:
     sys.exit('specify the unit number (eg. 28.1)')
 else:
@@ -19,58 +19,75 @@ if len(sys.argv) == 4:
 else:
     save = False
 
+# open the unit file and grab data from it.
 file = f'units/{level}/{unit}.json'
-
 with open(file) as json_file:
-    unit_data = json.load(json_file)
-    xkcd = unit_data['xkcd']
-    grid = unit_data['grid']
-    trend = unit_data['trend']
-    plots = unit_data['plots']
-    xtitle = plots[0]['x']['title']
-    ytitle = plots[0]['y']['title']
+	# Set defaults, and load from data dict if exists.
+    data = json.load(json_file)
+    xkcd = True if 'xkcd' not in data else data['xkcd']
+    grid = True if 'grid' not in data else data['grid']
+    trend = True if 'trend' not in data else data['trend']
+
+    # check to make sure plot exists and has x & y.
+    if 'plot' not in data:
+    	sys.exit('no plot specified in the file')
+    if 'x' not in data['plot']:
+    	sys.exit('no x data in the plot')
+    if 'y' not in data['plot']:
+    	sys.exit('no y data in the plot')
+
+    # save plot to variables.
+    plot = data['plot']
+    x = plot['x']
+    y = plot['y']
+
+    # check that x & y have values.
+    if 'values' not in x:
+    	sys.exit('no x values')
+    if 'values' not in y:
+    	sys.exit('no y values')
+
+    # set default titles, and use titles from dict if specified.
+    xtitle = 'x' if 'title' not in x else x['title']
+    ytitle = 'y' if 'title' not in y else y['title']
     title = f'{ytitle} vs. {xtitle}'
 
+
+
 def plotter ():
-    if len(plots) != 1:
-        sys.exit('not one plot')
-    else:
-        n = 0
-    # set up the plot stuff
+    # set window title, graph title, and adjust whitespace.
     fig = plt.figure()
     fig.canvas.set_window_title(re.sub('\$', '', title)) 
     plt.title(title)
     plt.subplots_adjust(left=0.15, bottom=0.15)
-    # grab data from dictionary and add it to the plot
-    plot = plots[n]
-    x = plot['x']
-    y = plot['y']
+
+  
 
     # set x & y axis labels
-    plt.xlabel(x['title'])
-    plt.ylabel(y['title'])
+    plt.xlabel(xtitle)
+    plt.ylabel(ytitle)
 
-    # plot the trend line first so it shows underneath (if trend is true)
+    # plot the trend line first so it shows underneath (if trend is true).
     if trend:
         plt.plot(x['values'], y['values'])
-    # plot the data points with blue circles
+
+    # plot the data points with blue circles.
     plt.plot(x['values'], y['values'], 'bo')
 
-    # if grid is true, turn on the grid
+    # if grid is true, turn on the grid.
     if grid:
-        plt.grid()
+    	plt.grid(linewidth='1')
 
-    # if specified, save to file
+    # if specified, save to file.
     if save:
         plt.savefig(f'Physics {level} Figure {unit}.png')
 
-    # show the grid
+    # show the graph.
     plt.show()
 
-# if xkcd is true, display the graph in xkcd style
+# if xkcd is true, display the graph in xkcd style.
 if xkcd:
     with plt.xkcd():
         plotter()
-# otherwise, display it normally
 else:
     plotter()
