@@ -1,7 +1,7 @@
 {
-    "title": "Force (N) vs. Displacement (m)",
     "xkcd": true,
     "grid": true,
+    "trend": true,
     "plots": [
         {
             "x": {
