@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import json, sys, re
 
+# linear regression function for coefficients.
+
+
 # grab course level from args.
 if len(sys.argv) < 2:
     sys.exit('specify the course level (eg. 30)')
