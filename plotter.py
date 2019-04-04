@@ -66,17 +66,17 @@ def plotter (x, y, linearize):
     # set default titles, and use titles from dict if specified.
     xtitle = 'x' if 'title' not in x else x['title']
     ytitle = 'y' if 'title' not in y else y['title']
-    title = f'{ytitle} vs. {xtitle}'
+    title = f'{ytitle}\ vs. {xtitle}'
 
     # set window title, graph title, and adjust whitespace.
     fig = plt.figure()
-    fig.canvas.set_window_title(re.sub('\$', '', title))
-    plt.title(title)
+    fig.canvas.set_window_title(title)
+    plt.title(f'${title}$')
     plt.subplots_adjust(left=0.15, bottom=0.15)
 
     # set x & y axis labels
-    plt.xlabel(xtitle)
-    plt.ylabel(ytitle)
+    plt.xlabel(f'${xtitle}$')
+    plt.ylabel(f'${ytitle}$')
 
     # plot the trend line (if trend is true).
     if trend and not linearize:
@@ -143,7 +143,9 @@ if not (linearize and only):
         plotter(x, y, False)
 
 # if linearize is true, display the linearized graph with same xkcd rules.
-if linearize:
+if linearize and not straight:
+    y['title'] = '(' + y['title'] + ' \\to ' + re.sub('→', '\\\\to', manipulations_string) + ')'
+    print(y['title'])
     y['values'] = y_values
     if xkcd:
         with plt.xkcd():
