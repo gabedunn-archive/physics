@@ -145,7 +145,6 @@ if not (linearize and only):
 # if linearize is true, display the linearized graph with same xkcd rules.
 if linearize and not straight:
     y['title'] = '(' + y['title'] + ' \\to ' + re.sub('→', '\\\\to', manipulations_string) + ')'
-    print(y['title'])
     y['values'] = y_values
     if xkcd:
         with plt.xkcd():
