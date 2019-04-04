@@ -10,7 +10,7 @@
             ]
         },
         "y": {
-            "title": "Period Squared (s^2)",
+            "title": "Period Squared ($s^2$)",
             "values": [
                 0.49,
                 0.91,
