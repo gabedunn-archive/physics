@@ -100,7 +100,10 @@ def plotter (x, y, linearize):
 
     # if specified, save to file.
     if save:
-        plt.savefig(filename)
+        if linearize:
+            plt.savefig(f'Linearized {filename}')
+        else:
+            plt.savefig(filename)
 
     # show the graph.
     plt.show()
