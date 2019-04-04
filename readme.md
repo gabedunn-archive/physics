@@ -2,10 +2,31 @@
 > A repo for my physics 20 & 30 course and the graphs I made with matplotlib for it.
 
 ## Usage
-```python
-python plotter.py <level> <unit> [<save>]
+```bash
+python plotter.py [-h] file [-t/--threshold THRESHOLD] [-s/--save] [-l/--linearize] [-o/--only]
 ```
 
-It will search the directory for the required unit, load the JSON files with the data, and plot it out.
+## Help
+```bash
+python ploter.py --help
+# ->
+usage: plotter.py [-h] file [-t/--threshold THRESHOLD] [-s/--save] [-l/--linearize] [-o/--only]
 
-If `save` is equal to either `1` or `true`, it will save an image file with the name of the course leven and unit to the current directory.
+
+Plots a graph based on the input file, and can also linearize the graph.
+
+positional arguments:
+  file                  a file to pull data from
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t THRESHOLD, --threshold THRESHOLD
+                        rmse threshold to consider highest good value
+  -s, --save            save the graph to a file (default: False)
+  -l, --linearize       show a second, linearized graph
+  -o, --only            show only the linearized graph
+```
+
+## TODO
+- Try not use `sqrt(y)` in place of `y^2`.
+- Add command overrides for all default graph options.

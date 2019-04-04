@@ -9,16 +9,16 @@ import argparse
 parser = argparse.ArgumentParser(description='Plot a graph based on the input file.')
 parser.add_argument('file', metavar='file', type=str,
                     help='a file to pull data from')
-parser.add_argument('--threshold', '-t', default='0.01', help='rmse threshold to consider highest good value')
+parser.add_argument( '-t', '--threshold', default='0.01', help='rmse threshold to consider highest good value')
 parser.add_argument('-s', '--save', dest='save', action='store_const',
                     const=True, default=False,
                     help='save the graph to a file (default: False)')
-parser.add_argument('--linearize', '-l', '--straighten', dest='linearize', action='store_const',
+parser.add_argument('-l', '--linearize', dest='linearize', action='store_const',
                     const=True, default=False,
                     help='show a second, linearized graph')
-parser.add_argument('--only', '-o', dest='only', action='store_const',
+parser.add_argument('-o', '--only', dest='only', action='store_const',
                     const=True, default=False,
-                    help='show a second, linearized graph')
+                    help='show only the linearized graph')
 args = parser.parse_args()
 
 file = args.file
