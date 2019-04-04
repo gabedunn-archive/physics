@@ -89,10 +89,11 @@ def plotter (x, y, linearize):
 
     # plot the line first so it shows underneath (if line is true).
     if line:
-        plt.plot(x['values'], y['values'])
-
-    # plot the data points with blue circles.
-    plt.plot(x['values'], y['values'], 'bo')
+        plt.plot(x['values'], y['values'], label=ytitle)
+        # plot the data points with blue circles.
+        plt.plot(x['values'], y['values'], 'bo')
+    else:
+        plt.plot(x['values'], y['values'], 'bo', label=ytitle)
 
     # if grid is true, turn on the grid.
     if grid:
@@ -104,6 +105,9 @@ def plotter (x, y, linearize):
             plt.savefig(f'Linearized {filename}')
         else:
             plt.savefig(filename)
+
+    # show legend
+    plt.legend()
 
     # show the graph.
     plt.show()
