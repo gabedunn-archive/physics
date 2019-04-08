@@ -19,6 +19,9 @@ parser.add_argument('-l', '--linearize', dest='linearize', action='store_const',
 parser.add_argument('-o', '--only', dest='only', action='store_const',
                     const=True, default=False,
                     help='show only the linearized graph')
+parser.add_argument('-x', '--xkcd', dest='xkcd', action='store_const',
+                    const=True, default=False,
+                    help='toggle the xkcd style of the graph')
 args = parser.parse_args()
 
 file = args.file
@@ -26,6 +29,7 @@ save = args.save
 threshold = float(args.threshold)
 linearize = args.linearize
 only = args.only
+xkcd_override = args.xkcd
 
 # if the file doesn't exists, exit.
 if not Path(file).is_file():
@@ -37,7 +41,10 @@ else:
 with open(file) as json_file:
     # set defaults, and load from data dict if exists.
     data = json.load(json_file)
-    xkcd = True if 'xkcd' not in data else data['xkcd']
+    if xkcd_override:
+        xkcd = False
+    else:
+        xkcd = True if 'xkcd' not in data else data['xkcd']
     grid = True if 'grid' not in data else data['grid']
     line = True if 'line' not in data else data['line']
     trend = True if 'trend' not in data else data['trend']
