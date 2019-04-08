@@ -39,7 +39,7 @@ parser.add_argument('-t', '--trend', dest='trend', action='store_const',
                     const=True, default=False,
                     help='Disable the trend line on the graph.')
 # Disable the line connecting the data points on the graph.
-parser.add_argument('-ln', '--line', dest='line', action='store_const',
+parser.add_argument('-c', '--connecting', dest='connecting', action='store_const',
                     const=True, default=False,
                     help='Disable the line connecting the data points on the graph.')
 
@@ -54,7 +54,7 @@ linear_only = args.only
 xkcd_override = args.xkcd
 grid_override = args.grid
 trend_override = args.trend
-line_override = args.line
+connecting_line_override = args.line
 
 # If the file doesn't exists, exit. Otherwise, set the png filename to the file path with png extension.
 if not Path(file).is_file():
@@ -69,7 +69,7 @@ with open(file) as json_file:
     xkcd = False if xkcd_override else True if 'xkcd' not in data else data['xkcd']
     grid = False if grid_override else True if 'grid' not in data else data['grid']
     trend = False if trend_override else True if 'trend' not in data else data['trend']
-    line = False if line_override else True if 'line' not in data else data['line']
+    line = False if connecting_line_override else True if 'line' not in data else data['line']
 
     # Check to make sure plot exists and has x & y.
     if 'plot' not in data:
