@@ -54,7 +54,7 @@ linear_only = args.only
 xkcd_override = args.xkcd
 grid_override = args.grid
 trend_override = args.trend
-connecting_line_override = args.line
+connecting_line_override = args.connecting
 
 # If the file doesn't exists, exit. Otherwise, set the png filename to the file path with png extension.
 if not Path(file).is_file():
@@ -95,11 +95,11 @@ with open(file) as json_file:
 
 def plotter (x, y, linearize):
     """
+    Plot the graph given the specified variables.
     :param x: List of x values.
     :param y: List of y values.
     :param linearize: Whether or not the line is linearized.
     :return: Nothing.
-    note::  Plot the graph given the specified variables.
     """
 
     # Set titles from x & y variables. If they don't exists, default to 'x' & 'y'.
@@ -163,9 +163,9 @@ def plotter (x, y, linearize):
 # Define function to plot graph with xkcd style if specified.
 def use_xkcd(x, y, linearize, xkcd):
     """
+    Plot in xkcd style if specified, otherwise plot normally.
     :param xkcd: Whether or not to use the xkcd style.
     :return: Nothing.
-    note:: Plot in xkcd style if specified, otherwise plot normally.
     """
     if xkcd:
         with plt.xkcd():
