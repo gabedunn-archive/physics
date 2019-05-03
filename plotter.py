@@ -71,18 +71,36 @@ with open(file) as json_file:
     trend = False if trend_override else True if 'trend' not in data else data['trend']
     line = False if connecting_line_override else True if 'line' not in data else data['line']
 
+    if isinstance(data['plot'], list) and len(data['plot']) != 1:
+        trend = False
+        if linearize:
+            sys.exit('Can\'t linearize multiple lines at once.')
+
     # Check to make sure plot exists and has x & y.
     if 'plot' not in data:
         sys.exit('No plot specified in the file.')
-    if 'x' not in data['plot']:
-        sys.exit('No x data in the plot.')
-    if 'y' not in data['plot']:
-        sys.exit('No y data in the plot.')
 
-    # Save plot to variables.
     plot = data['plot']
-    x = plot['x']
-    y = plot['y']
+    if isinstance(plot, list):
+        if 'x' not in plot[0]:
+            sys.exit('No x data in the plot.')
+        if 'y' not in plot[0]:
+            sys.exit('No y data in the plot.')
+        # Save plot to variables.
+        x = plot[0]['x']
+        y = plot[0]['y']
+        print('list')
+    elif isinstance(plot, dict):
+        if 'x' not in plot:
+            sys.exit('No x data in the plot.')
+        if 'y' not in plot:
+            sys.exit('No y data in the plot.')
+        # Save plot to variables.
+        x = plot['x']
+        y = plot['y']
+        print('dict')
+    else:
+        sys.exit('Plot not a list or dict.')
 
     # Check that x & y have values.
     if 'values' not in x:
@@ -93,7 +111,7 @@ with open(file) as json_file:
     # Combine x & y values into one list of pairs.
     dataset = combine(x, y)
 
-def plotter (x, y, linearize):
+def plotter (x, y, linearize, plot):
     """
     Plot the graph given the specified variables.
     :param x: List of x values.
@@ -138,9 +156,16 @@ def plotter (x, y, linearize):
         plt.plot(x['values'], y['values'], 'b', label=ytitle)
         # Plot data points as blue circles second.
         plt.plot(x['values'], y['values'], 'bo')
+        if isinstance(plot, list):
+            for item in plot[1:]:
+                plt.plot(item['x']['values'], item['y']['values'], 'r')
+                plt.plot(item['x']['values'], item['y']['values'], 'ro')
     else:
         # Simply plot the data points without a connecting line.
         plt.plot(x['values'], y['values'], 'bo', label=ytitle)
+        if isinstance(plot, list):
+            for item in plot[1:]:
+                plt.plot(item['x']['values'], item['y']['values'], 'r')
 
     # If specified, turn on the grid.
     if grid:
@@ -161,7 +186,7 @@ def plotter (x, y, linearize):
     plt.show()
 
 # Define function to plot graph with xkcd style if specified.
-def use_xkcd(x, y, linearize, xkcd):
+def use_xkcd(x, y, linearize, xkcd, plot):
     """
     Plot in xkcd style if specified, otherwise plot normally.
     :param xkcd: Whether or not to use the xkcd style.
@@ -169,9 +194,9 @@ def use_xkcd(x, y, linearize, xkcd):
     """
     if xkcd:
         with plt.xkcd():
-            plotter(x, y, linearize)
+            plotter(x, y, linearize, plot)
     else:
-        plotter(x, y, linearize)
+        plotter(x, y, linearize, plot)
 
 # Print some information about whether the graph can be straightened.
 # Grab the coefficient of the trend line.
@@ -191,8 +216,9 @@ print(dash_line)
 print(f'Trend Line (LBF):   {round(b1, 3)}x {separator} {round(b0, 3)}')
 print(f'Trend Line RMSE:    {round(rmse, 4)}%')
 print(f'Line is Straight:   {straight}')
+
 # If the line isn't straight, straighten in and show the process.
-if not straight:
+if not straight and isinstance(data['plot'], dict):
     # Grab y values, rmse, operations, and iterations of the straightened line.
     y_values, straight_rmse, manipulations, iterations = linearize_complete(x['values'], y['values'], threshold)
     # Join the manipulations into one string.
@@ -211,16 +237,16 @@ print(dash_line)
 
 # If linearize isn't specified, just show the graph. Otherwise, decide how to show the linearized graph.
 if not linearize:
-    use_xkcd(x, y, False, xkcd)
+    use_xkcd(x, y, False, xkcd, plot)
 else:
     # If linear_only isn't specified, show the initial graph first, only if graph isn't initially straight.
     if (not linear_only) and (not straight):
-        use_xkcd(x, y, False, xkcd)
+        use_xkcd(x, y, False, xkcd, plot)
     # If the graph is already straight, simply display it.
     if straight:
         # Set the title to show that it was already straight.
         y['title'] += ' (Already Straight)'
-        use_xkcd(x, y, False, xkcd)
+        use_xkcd(x, y, False, xkcd, plot)
     else:
         # Grab the y values, rmse, operations, and iterations from the straightened graph.
         y_values, straight_rmse, manipulations, iterations = linearize_complete(x['values'], y['values'], threshold)
@@ -230,4 +256,4 @@ else:
         # Assign new values to y.
         y['values'] = y_values
         # Display the graph.
-        use_xkcd(x, y, True, xkcd)
+        use_xkcd(x, y, True, xkcd, plot)
